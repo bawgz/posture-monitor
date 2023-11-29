@@ -1,28 +1,49 @@
 'use client';
 
 import { useChat } from 'ai/react';
+import Webcam from 'react-webcam';
+import { useState } from 'react';
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat-with-vision',
   });
+
+  const [screenshot, setScreenshot] = useState('');
+
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+      <Webcam
+        audio={false}
+        screenshotFormat="image/jpeg"
+      >
+        {({ getScreenshot }) => (
+          <button
+            onClick={(event) => {
+              const screenshot = getScreenshot();
+              console.log(screenshot);
+              handleSubmit(event, { data: { imageUrl: screenshot } });
+              setScreenshot(screenshot);
+            }}
+          >
+            Capture photo
+          </button>
+        )}
+      </Webcam>
       {messages.length > 0
         ? messages.map(m => (
-            <div key={m.id} className="whitespace-pre-wrap">
-              {m.role === 'user' ? 'User: ' : 'AI: '}
-              {m.content}
-            </div>
-          ))
+          <div key={m.id} className="whitespace-pre-wrap">
+            {m.role === 'user' ? 'User: ' : 'AI: '}
+            {m.content}
+          </div>
+        ))
         : null}
 
       <form
         onSubmit={e => {
           handleSubmit(e, {
             data: {
-              imageUrl:
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Field_sparrow_in_CP_%2841484%29_%28cropped%29.jpg/733px-Field_sparrow_in_CP_%2841484%29_%28cropped%29.jpg',
+              imageUrl: screenshot,
             },
           });
         }}
@@ -34,6 +55,13 @@ export default function Chat() {
           onChange={handleInputChange}
         />
       </form>
+
+      {screenshot !== '' && (
+        <img
+          src={screenshot}
+        />
+      )}
+
     </div>
   );
 }

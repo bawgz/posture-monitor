@@ -1,7 +1,6 @@
 // ./app/api/chat/route.ts
 import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { encode } from 'base64-arraybuffer';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -18,17 +17,6 @@ export async function POST(req: Request) {
   const initialMessages = messages.slice(0, -1);
   const currentMessage = messages[messages.length - 1];
 
-  console.log("fetching the image");
-  const image = await fetch(data.imageUrl);
-  console.log("got the image");
-  const base64Image = encode(await image.arrayBuffer());
-
-  console.log("transformed the image");
-  console.log(JSON.stringify(base64Image));
-
-  // const image = await axios.get(data.imageUrl, { responseType: 'arraybuffer' });
-  // console.log("got the image");
-  // const base64Image = Buffer.from(image.data).toString('base64');
 
   // Ask OpenAI for a streaming chat completion given the prompt
   try {
@@ -44,7 +32,7 @@ export async function POST(req: Request) {
             { type: 'text', text: currentMessage.content },
             {
               type: 'image_url',
-              image_url: `data:image/jpg;base64,${base64Image}`,
+              image_url: data.imageUrl,
             },
           ],
         },
