@@ -2,10 +2,10 @@
 
 import { useChat } from 'ai/react';
 import Webcam from 'react-webcam';
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, append } = useChat({
     api: '/api/chat-with-vision',
   });
 
@@ -13,19 +13,44 @@ export default function Chat() {
 
   const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
 
-  const takeScreenshot = () => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      takeScreenshot()
+        .catch(console.error);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [webcamRef]);
+
+  const takeScreenshot = async () => {
+    console.log(`taking screenshot at ${new Date().toLocaleTimeString()}`);
     if (!webcamRef.current) {
       return;
     }
 
     const screenshot = webcamRef.current!.getScreenshot();
-    console.log(screenshot);
 
     if (!screenshot) {
       return;
     }
 
     setScreenshot(screenshot);
+    // call backend api here
+    const resp = await fetch(
+      '/api/chat-with-vision',
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: {
+            imageUrl: screenshot,
+          }
+        }),
+      });
+
+    console.log(await resp.json());
   }
 
   return (

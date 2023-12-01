@@ -24,10 +24,9 @@ export async function POST(req: Request) {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4-vision-preview',
-      stream: true,
       max_tokens: 150,
       messages: [
-        ...messages,
+        ...(messages || []),
         {
           ...currentMessage,
           content: [
@@ -41,10 +40,14 @@ export async function POST(req: Request) {
       ],
     });
 
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
+    // // Convert the response into a friendly text-stream
+    // const stream = OpenAIStream(response);
+    // // Respond with the stream
+    // return new StreamingTextResponse(stream);
+
+    console.log(response.choices[0].message);
+
+    return new Response(JSON.stringify(response.choices[0].message), { status: 200 });
   } catch (error: any) {
     console.log("mmmmmm uh oh.... problem");
     console.log(error);
