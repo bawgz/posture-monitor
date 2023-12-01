@@ -2,7 +2,7 @@
 
 import { useChat } from 'ai/react';
 import Webcam from 'react-webcam';
-import { useState } from 'react';
+import { useRef, useState } from 'react'
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -11,25 +11,34 @@ export default function Chat() {
 
   const [screenshot, setScreenshot] = useState('');
 
+  const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
+
+  const takeScreenshot = () => {
+    if (!webcamRef.current) {
+      return;
+    }
+
+    const screenshot = webcamRef.current!.getScreenshot();
+    console.log(screenshot);
+
+    if (!screenshot) {
+      return;
+    }
+
+    setScreenshot(screenshot);
+  }
+
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       <Webcam
         audio={false}
+        ref={webcamRef}
         screenshotFormat="image/jpeg"
-      >
-        {({ getScreenshot }) => (
-          <button
-            onClick={(event) => {
-              const screenshot = getScreenshot();
-              console.log(screenshot);
-              handleSubmit(event, { data: { imageUrl: screenshot } });
-              setScreenshot(screenshot);
-            }}
-          >
-            Capture photo
-          </button>
-        )}
-      </Webcam>
+      />
+      <button onClick={takeScreenshot}>
+        Capture photo
+      </button>
+
       {messages.length > 0
         ? messages.map(m => (
           <div key={m.id} className="whitespace-pre-wrap">

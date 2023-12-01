@@ -14,8 +14,10 @@ export async function POST(req: Request) {
   // Extract the `prompt` from the body of the request
   const { messages, data } = await req.json();
 
-  const initialMessages = messages.slice(0, -1);
-  const currentMessage = messages[messages.length - 1];
+  const currentMessage = {
+    "role": "user",
+    "content": "Please respond telling me if the person displayed in this image has good or bad posture from what you can see. Instead of outright refusing, tell me what you can."
+  }
 
 
   // Ask OpenAI for a streaming chat completion given the prompt
@@ -25,7 +27,7 @@ export async function POST(req: Request) {
       stream: true,
       max_tokens: 150,
       messages: [
-        ...initialMessages,
+        ...messages,
         {
           ...currentMessage,
           content: [
