@@ -1,26 +1,15 @@
 'use client';
 
-import { useChat } from 'ai/react';
 import Webcam from 'react-webcam';
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
+
+let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, append } = useChat({
-    api: '/api/chat-with-vision',
-  });
-
   const [screenshot, setScreenshot] = useState('');
+  const [isStarted, setIsStarted] = useState(false);
 
   const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      takeScreenshot()
-        .catch(console.error);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [webcamRef]);
 
   const takeScreenshot = async () => {
     console.log(`taking screenshot at ${new Date().toLocaleTimeString()}`);
@@ -35,7 +24,7 @@ export default function Chat() {
     }
 
     setScreenshot(screenshot);
-    // call backend api here
+
     const resp = await fetch(
       '/api/chat-with-vision',
       {
@@ -53,6 +42,22 @@ export default function Chat() {
     console.log(await resp.json());
   }
 
+  function handleStartStopOnClick(isStarted: boolean): void {
+    if (!isStarted) {
+      takeScreenshot()
+        .catch(console.error);
+      screenShotInterval = setInterval(() => {
+        takeScreenshot()
+          .catch(console.error);
+      }, 30000);
+      console.log(screenShotInterval);
+    } else {
+      clearInterval(screenShotInterval);
+    }
+
+    setIsStarted(!isStarted);
+  }
+
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       <Webcam
@@ -60,41 +65,16 @@ export default function Chat() {
         ref={webcamRef}
         screenshotFormat="image/jpeg"
       />
-      <button onClick={takeScreenshot}>
-        Capture photo
-      </button>
-
-      {messages.length > 0
-        ? messages.map(m => (
-          <div key={m.id} className="whitespace-pre-wrap">
-            {m.role === 'user' ? 'User: ' : 'AI: '}
-            {m.content}
-          </div>
-        ))
-        : null}
-
-      <form
-        onSubmit={e => {
-          handleSubmit(e, {
-            data: {
-              imageUrl: screenshot,
-            },
-          });
-        }}
-      >
-        <input
-          className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-          value={input}
-          placeholder="What does the image show..."
-          onChange={handleInputChange}
-        />
-      </form>
 
       {screenshot !== '' && (
         <img
           src={screenshot}
         />
       )}
+
+      <button onClick={() => handleStartStopOnClick(isStarted)}>
+        {isStarted ? 'Stop' : 'Start'}
+      </button>
 
     </div>
   );

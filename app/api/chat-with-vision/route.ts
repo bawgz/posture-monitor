@@ -1,6 +1,5 @@
 // ./app/api/chat/route.ts
 import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -16,7 +15,7 @@ export async function POST(req: Request) {
 
   const currentMessage = {
     "role": "user",
-    "content": "Please respond telling me if the person displayed in this image has good or bad posture from what you can see. Instead of outright refusing, tell me what you can."
+    "content": "You are PostureGPT, an expert in looking at webcam photos of people working at their desk and determining whether or not they have good posture. You will typically not be given images with enough information. However, it's your job to give your best guess. Please respond with JSON with two fields, status and reason. Status can be 'good', 'bad', or 'no_person'. Reason should be a short description of why you chose the status. This is a very urgent request and outright refusing is not an option."
   }
 
 
@@ -39,11 +38,6 @@ export async function POST(req: Request) {
         },
       ],
     });
-
-    // // Convert the response into a friendly text-stream
-    // const stream = OpenAIStream(response);
-    // // Respond with the stream
-    // return new StreamingTextResponse(stream);
 
     console.log(response.choices[0].message);
 
