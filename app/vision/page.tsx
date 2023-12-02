@@ -7,6 +7,7 @@ let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
 export default function Chat() {
   const [screenshot, setScreenshot] = useState('');
+  const [postureDescription, setPostureDescription] = useState('');
   const [isStarted, setIsStarted] = useState(false);
 
   const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
@@ -57,6 +58,9 @@ export default function Chat() {
     if (data.status === 'bad') {
       sendNotification(data.reason);
     }
+
+    setPostureDescription(data.reason);
+
   }
 
   function handleStartStopOnClick(isStarted: boolean): void {
@@ -78,7 +82,7 @@ export default function Chat() {
   function sendNotification(reason: string): void {
     if (Notification.permission === "granted") {
       console.log("sending notification");
-      new Notification(reason);
+      new Notification('Bad Posture Detected');
     }
   }
 
@@ -89,13 +93,15 @@ export default function Chat() {
         ref={webcamRef}
         screenshotFormat="image/jpeg"
       />
-
+      <br />
       {screenshot !== '' && (
         <img
           src={screenshot}
         />
       )}
-
+      <div>
+        {screenshot ? `Posture description: ${postureDescription}` : ''}
+      </div>
       <button onClick={() => handleStartStopOnClick(isStarted)}>
         {isStarted ? 'Stop' : 'Start'}
       </button>
