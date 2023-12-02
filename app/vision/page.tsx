@@ -1,7 +1,7 @@
 'use client';
 
 import Webcam from 'react-webcam';
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
@@ -11,7 +11,18 @@ export default function Chat() {
 
   const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
 
-  const takeScreenshot = async () => {
+  useEffect(() => {
+    if (!("Notification" in window)) {
+      alert("This browser does not support system notifications!")
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission((permission) => {
+        console.log(permission);
+      })
+    }
+  }, [])
+
+
+  async function takeScreenshot() {
     console.log(`taking screenshot at ${new Date().toLocaleTimeString()}`);
     if (!webcamRef.current) {
       return;
@@ -39,7 +50,13 @@ export default function Chat() {
         }),
       });
 
-    console.log(await resp.json());
+    const data = JSON.parse(await resp.json());
+
+    console.log(data);
+
+    if (data.status === 'bad') {
+      sendNotification(data.reason);
+    }
   }
 
   function handleStartStopOnClick(isStarted: boolean): void {
@@ -56,6 +73,13 @@ export default function Chat() {
     }
 
     setIsStarted(!isStarted);
+  }
+
+  function sendNotification(reason: string): void {
+    if (Notification.permission === "granted") {
+      console.log("sending notification");
+      new Notification(reason);
+    }
   }
 
   return (
