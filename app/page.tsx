@@ -102,7 +102,7 @@ export default function Chat() {
       <div>
         {screenshot ? `Posture description: ${postureDescription}` : ''}
       </div>
-      <button onClick={() => handleStartStopOnClick(isStarted)}>
+      <button className='h-10 px-6 font-semibold rounded-md bg-black text-white' onClick={() => handleStartStopOnClick(isStarted)}>
         {isStarted ? 'Stop' : 'Start'}
       </button>
 
