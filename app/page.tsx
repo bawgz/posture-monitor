@@ -9,6 +9,7 @@ let screenShotInterval: ReturnType<typeof setInterval> = null!;
 export default function Chat() {
   const [screenshot, setScreenshot] = useState('');
   const [postureDescription, setPostureDescription] = useState('');
+  const [postureRating, setPostureRating] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [play] = useSound('/beep-warning.mp3');
@@ -53,7 +54,7 @@ export default function Chat() {
         }),
       });
 
-    const data = JSON.parse(await resp.json());
+    const data = await resp.json();
 
     console.log(data);
 
@@ -62,6 +63,7 @@ export default function Chat() {
     }
 
     setPostureDescription(data.reason);
+    setPostureRating(data.rating);
     setIsLoading(false);
   }
 
@@ -108,6 +110,7 @@ export default function Chat() {
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
               <div className="max-w-screen-lg text-black">
                 <h4 className="mb-4 text-4xl tracking-tight font-bold">Posture Description</h4>
+                <p className='mb-4 font-dark'>{isLoading ? '' : `Rating: ${postureRating}`}</p>
                 <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
               </div>
             </div>
