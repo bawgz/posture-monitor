@@ -15,7 +15,8 @@
     "openai": "4.16.1",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
-    "react-webcam": "^7.2.0"
+    "react-webcam": "^7.2.0",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.12",

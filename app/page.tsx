@@ -2,6 +2,7 @@
 
 import Webcam from 'react-webcam';
 import { useRef, useState, useEffect } from 'react'
+import useSound from 'use-sound';
 
 let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
@@ -9,13 +10,12 @@ export default function Chat() {
   const [screenshot, setScreenshot] = useState('');
   const [postureDescription, setPostureDescription] = useState('');
   const [isStarted, setIsStarted] = useState(false);
+  const [play] = useSound('/beep-warning.mp3');
 
   const webcamRef = useRef<Webcam & HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (!("Notification" in window)) {
-      alert("This browser does not support system notifications!")
-    } else if (Notification.permission !== "denied") {
+    if ("Notification" in window && Notification.permission !== "denied") {
       Notification.requestPermission((permission) => {
         console.log(permission);
       })
@@ -80,9 +80,10 @@ export default function Chat() {
   }
 
   function sendNotification(reason: string): void {
-    if (Notification.permission === "granted") {
+    if ("Notification" in window && Notification.permission === "granted") {
       console.log("sending notification");
       new Notification('Bad Posture Detected');
+      play();
     }
   }
 
