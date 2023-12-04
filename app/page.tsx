@@ -9,6 +9,7 @@ let screenShotInterval: ReturnType<typeof setInterval> = null!;
 export default function Chat() {
   const [screenshot, setScreenshot] = useState('');
   const [postureDescription, setPostureDescription] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [play] = useSound('/beep-warning.mp3');
 
@@ -36,6 +37,7 @@ export default function Chat() {
     }
 
     setScreenshot(screenshot);
+    setIsLoading(true);
 
     const resp = await fetch(
       '/api/chat-with-vision',
@@ -60,7 +62,7 @@ export default function Chat() {
     }
 
     setPostureDescription(data.reason);
-
+    setIsLoading(false);
   }
 
   function handleStartStopOnClick(isStarted: boolean): void {
@@ -100,9 +102,19 @@ export default function Chat() {
           src={screenshot}
         />
       )}
-      <div>
-        {screenshot ? `Posture description: ${postureDescription}` : ''}
-      </div>
+      {
+        screenshot ?
+          <section className="bg-white">
+            <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+              <div className="max-w-screen-lg text-black">
+                <h4 className="mb-4 text-4xl tracking-tight font-bold">Posture Description</h4>
+                <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
+              </div>
+            </div>
+          </section>
+          :
+          <span />
+      }
       <button className='h-10 px-6 font-semibold rounded-md bg-black text-white' onClick={() => handleStartStopOnClick(isStarted)}>
         {isStarted ? 'Stop' : 'Start'}
       </button>
