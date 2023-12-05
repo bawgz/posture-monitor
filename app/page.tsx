@@ -92,24 +92,29 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    <div className="flex flex-col items-center w-full max-w-2xl py-10 mx-auto stretch">
       <Webcam
         audio={false}
         ref={webcamRef}
         screenshotFormat="image/jpeg"
       />
       <br />
+      <button className='h-10 font-semibold rounded-md bg-black text-white max-w-min px-10 content-center' onClick={() => handleStartStopOnClick(isStarted)}>
+        {isStarted ? 'Stop' : 'Start'}
+      </button>
+      <br />
       {screenshot !== '' && (
         <img
+          className='w-full'
           src={screenshot}
         />
       )}
       {
         screenshot ?
-          <section className="bg-white">
-            <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+          <section className="bg-gray-100 w-full">
+            <div className="py-4 px-4 mx-auto max-w-screen-xl lg:px-6">
               <div className="max-w-screen-lg text-black">
-                <h4 className="mb-4 text-4xl tracking-tight font-bold">Posture Description</h4>
+                <h4 className="mb-4 text-4xl tracking-tight font-bold">Assessment</h4>
                 <p className='mb-4 font-dark'>{isLoading ? '' : `Rating: ${postureRating}`}</p>
                 <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
               </div>
@@ -118,9 +123,6 @@ export default function Chat() {
           :
           <span />
       }
-      <button className='h-10 px-6 font-semibold rounded-md bg-black text-white' onClick={() => handleStartStopOnClick(isStarted)}>
-        {isStarted ? 'Stop' : 'Start'}
-      </button>
 
     </div>
   );
