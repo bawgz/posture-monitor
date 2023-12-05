@@ -52,11 +52,11 @@ export async function POST(req: Request) {
 }
 
 function getStatus(rating: number): string {
-  if (rating === -1) {
+  if (rating < 0) {
     return "no_person"
   }
 
-  if (rating > 5) {
+  if (rating > 4) {
     return "good";
   } else {
     return "bad";
