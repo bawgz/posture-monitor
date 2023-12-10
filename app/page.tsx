@@ -98,11 +98,25 @@ export default function Chat() {
         ref={webcamRef}
         screenshotFormat="image/jpeg"
       />
+      {
+        screenshot ?
+          <section className="bg-gray-100 w-full">
+            <div className="py-4 px-4 mx-auto max-w-screen-xl lg:px-6">
+              <div className="max-w-screen-lg text-black">
+                <h4 className="mb-4 text-4xl tracking-tight font-bold">Assessment</h4>
+                <p className='mb-4 font-dark'>{isLoading ? '' : `Rating: ${postureRating}`}</p>
+                <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
+              </div>
+            </div>
+          </section>
+          :
+          <span />
+      }
       <br />
       <button className='h-10 font-semibold rounded-md bg-black text-white max-w-min px-10 content-center' onClick={() => handleStartStopOnClick(isStarted)}>
         {isStarted ? 'Stop' : 'Start'}
       </button>
-      <br />
+      {/* <br />
       {screenshot !== '' && (
         <img
           className='w-full'
@@ -122,7 +136,7 @@ export default function Chat() {
           </section>
           :
           <span />
-      }
+      } */}
 
     </div>
   );
