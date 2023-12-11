@@ -94,12 +94,19 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col items-center w-full max-w-2xl py-10 mx-auto stretch">
-      <Webcam
-        audio={false}
-        ref={webcamRef}
-        screenshotFormat="image/jpeg"
-        mirrored={true}
-      />
+      <div className='relative'>
+        <Webcam
+          audio={false}
+          ref={webcamRef}
+          screenshotFormat="image/jpeg"
+          mirrored={true}
+        />
+        <button
+          className='absolute h-10 bottom-0 w-full font-semibold rounded-md bg-black/40 text-white'
+          onClick={() => handleStartStopOnClick(isStarted)}>
+          {isStarted ? 'Stop' : 'Start'}
+        </button>
+      </div>
       {
         screenshot ?
           <section className="bg-gray-100 w-full">
@@ -125,10 +132,6 @@ export default function Chat() {
           :
           <span />
       }
-      <br />
-      <button className='h-10 font-semibold rounded-md bg-black text-white max-w-min px-10 content-center' onClick={() => handleStartStopOnClick(isStarted)}>
-        {isStarted ? 'Stop' : 'Start'}
-      </button>
     </div>
   );
 }
