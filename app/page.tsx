@@ -3,6 +3,7 @@
 import Webcam from 'react-webcam';
 import { useRef, useState, useEffect } from 'react'
 import useSound from 'use-sound';
+import ModalImage from 'react-modal-image';
 
 let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
@@ -97,6 +98,7 @@ export default function Chat() {
         audio={false}
         ref={webcamRef}
         screenshotFormat="image/jpeg"
+        mirrored={true}
       />
       {
         screenshot ?
@@ -104,8 +106,19 @@ export default function Chat() {
             <div className="py-4 px-4 mx-auto max-w-screen-xl lg:px-6">
               <div className="max-w-screen-lg text-black">
                 <h4 className="mb-4 text-4xl tracking-tight font-bold">Assessment</h4>
-                <p className='mb-4 font-dark'>{isLoading ? '' : `Rating: ${postureRating}`}</p>
+                <p className="mb-4 font-dark">{isLoading ? '' : `Rating: ${postureRating}`}</p>
                 <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
+              </div>
+            </div>
+            <div className="flex justify-center mb-4">
+              <div className="w-1/4">
+                <ModalImage
+                  small={screenshot}
+                  medium={screenshot}
+                  hideDownload={true}
+                  hideZoom={true}
+                  alt="Posture sampled"
+                />
               </div>
             </div>
           </section>
@@ -116,28 +129,6 @@ export default function Chat() {
       <button className='h-10 font-semibold rounded-md bg-black text-white max-w-min px-10 content-center' onClick={() => handleStartStopOnClick(isStarted)}>
         {isStarted ? 'Stop' : 'Start'}
       </button>
-      {/* <br />
-      {screenshot !== '' && (
-        <img
-          className='w-full'
-          src={screenshot}
-        />
-      )}
-      {
-        screenshot ?
-          <section className="bg-gray-100 w-full">
-            <div className="py-4 px-4 mx-auto max-w-screen-xl lg:px-6">
-              <div className="max-w-screen-lg text-black">
-                <h4 className="mb-4 text-4xl tracking-tight font-bold">Assessment</h4>
-                <p className='mb-4 font-dark'>{isLoading ? '' : `Rating: ${postureRating}`}</p>
-                <p className="mb-4 font-light">{isLoading ? 'Loading...' : postureDescription}</p>
-              </div>
-            </div>
-          </section>
-          :
-          <span />
-      } */}
-
     </div>
   );
 }
