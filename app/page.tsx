@@ -102,7 +102,7 @@ export default function Chat() {
           mirrored={true}
         />
         <button
-          className='absolute h-10 bottom-0 w-full font-semibold rounded-md bg-black/40 text-white'
+          className='absolute h-10 bottom-0 w-full font-semibold bg-black/40 text-white'
           onClick={() => handleStartStopOnClick(isStarted)}>
           {isStarted ? 'Stop' : 'Start'}
         </button>
