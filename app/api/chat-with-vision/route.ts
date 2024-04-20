@@ -16,8 +16,9 @@ export async function POST(req: Request) {
   // Ask OpenAI for a streaming chat completion given the prompt
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-vision-preview',
+      model: 'gpt-4-turbo',
       max_tokens: 500,
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
           content: [
             {
               type: 'image_url',
-              image_url: data.imageUrl,
+              image_url: { url: data.imageUrl },
             },
           ],
         },

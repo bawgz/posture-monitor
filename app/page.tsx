@@ -7,7 +7,7 @@ import ModalImage from 'react-modal-image';
 
 let screenShotInterval: ReturnType<typeof setInterval> = null!;
 
-export default function Chat() {
+export default function Page() {
   const [screenshot, setScreenshot] = useState('');
   const [postureDescription, setPostureDescription] = useState('');
   const [postureRating, setPostureRating] = useState('');
